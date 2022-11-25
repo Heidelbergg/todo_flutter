@@ -20,6 +20,12 @@ class _AddTodoPageState extends State<AddTodoPage> {
 
   TodoDatabase tdb = TodoDatabase();
 
+  @override
+  void initState() {
+    dateController.text = DateFormat('dd/MM/yyyy').format(selectedDate);
+    super.initState();
+  }
+
   String? validateName(String? name){
     if (name == null || name.isEmpty || name == ""){
       return "Indsæt gyldigt navn";
@@ -109,6 +115,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
                   tdb.todos.add([todoNameController.text, dateController.text, false]);
                   tdb.updateTodos();
                   todoNameController.clear();
+                  print(tdb.todos.toString());
                 });
                 Navigator.pop(context);
               }, style: ButtonStyle(

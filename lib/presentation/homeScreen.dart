@@ -14,16 +14,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   TodoDatabase tdb = TodoDatabase();
-  final todos = Hive.box('todos');
-
 
   @override
   void initState() {
-    if (todos.get('TODOLIST') == null){
+    if (tdb.todoBox.get('TODOLIST') == null){
       tdb.todos = [
         ['Eat crayons', '26/11/2022', false]
       ];
-      tdb.updateTodos();
     } else {
       tdb.loadTodos();
     }
@@ -76,6 +73,7 @@ class _HomePageState extends State<HomePage> {
                 setState(() {
                   tdb.todos[index][2] = value!;
                   tdb.updateTodos();
+                  print(tdb.todos.toString());
                 });
               },
             );
@@ -84,7 +82,11 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: ElevatedButton.icon(onPressed: (){
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const AddTodoPage()));
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const AddTodoPage())).then((value) {
+          setState(() {
+            tdb.updateTodos();
+          });
+        });
       }, icon: Icon(Icons.add), label: Text("ADD TASK", style: TextStyle(fontWeight: FontWeight.w700),)),
     );
   }
