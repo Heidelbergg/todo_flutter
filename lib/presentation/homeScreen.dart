@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:todo_flutter/data/todoDatabase.dart';
 import 'package:todo_flutter/presentation/addTodo.dart';
@@ -67,7 +66,8 @@ class _HomePageState extends State<HomePage> {
               itemCount: tdb.todos.length,
               itemBuilder: (context, index){
             return CheckboxListTile(
-              title: Text(tdb.todos[index][0]),
+              tileColor: tdb.todos[index][2] == true ? Colors.grey : null,
+              title: tdb.todos[index][2] == false ? Text(tdb.todos[index][0]) :  Text(tdb.todos[index][0], style: const TextStyle(decoration: TextDecoration.lineThrough),),
               subtitle: Text(tdb.todos[index][1]),
               value: tdb.todos[index][2],
               onChanged: (bool? value) {
