@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todo_flutter/data/todoDatabase.dart';
 
 class AddTodoPage extends StatefulWidget {
   const AddTodoPage({super.key});
@@ -18,12 +18,13 @@ class _AddTodoPageState extends State<AddTodoPage> {
 
   late DateTime selectedDate = DateTime.now();
 
-
+  TodoDatabase tdb = TodoDatabase();
 
   String? validateName(String? name){
     if (name == null || name.isEmpty || name == ""){
       return "Indsæt gyldigt navn";
     }
+    return null;
   }
 
 
@@ -31,13 +32,13 @@ class _AddTodoPageState extends State<AddTodoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Add task"),
-        leading: BackButton(),
+        title: const Text("Add task"),
+        leading: const BackButton(),
       ),
       body: Column(
         children: [
           Container(
-            padding: EdgeInsets.only(left: 15, right: 20, top: 40, bottom: 30),
+            padding: const EdgeInsets.only(left: 15, right: 20, top: 40, bottom: 30),
             child: TextFormField(
               validator: validateName,
               keyboardType: TextInputType.text,
@@ -51,7 +52,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
                     borderRadius: BorderRadius.circular(15)
                 ),
                 floatingLabelBehavior: FloatingLabelBehavior.always,
-                hintText: "Input task name", hintStyle: TextStyle(color: Colors.grey),),),
+                hintText: "Input task name", hintStyle: const TextStyle(color: Colors.grey),),),
           ),
           Row(
             children: [
@@ -74,7 +75,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
                         context: context,
                         initialDate: DateTime.now(),
                         firstDate: DateTime.now(),
-                        lastDate: DateTime.now().add(Duration(days: 90)))
+                        lastDate: DateTime.now().add(const Duration(days: 90)))
                     )!;
                     setState(() {
                       selectedDate;
@@ -87,14 +88,14 @@ class _AddTodoPageState extends State<AddTodoPage> {
                     enabled: false,
                     decoration: InputDecoration(fillColor: Colors.grey.withOpacity(0.25), filled: true, border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                       enabledBorder:
-                      OutlineInputBorder(borderSide: BorderSide(color: Colors.transparent),
-                          borderRadius: BorderRadius.circular(10)), labelText: 'Date', labelStyle: TextStyle(color: Colors.black),
+                      OutlineInputBorder(borderSide: const BorderSide(color: Colors.transparent),
+                          borderRadius: BorderRadius.circular(10)), labelText: 'Date', labelStyle: const TextStyle(color: Colors.black),
                       focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black,),
+                          borderSide: const BorderSide(color: Colors.black,),
                           borderRadius: BorderRadius.circular(10)
                       ),
                       floatingLabelBehavior: FloatingLabelBehavior.always,
-                      hintText: DateFormat('dd/MM/yyyy').format(selectedDate), hintStyle: TextStyle(color: Colors.black),),),
+                      hintText: DateFormat('dd/MM/yyyy').format(selectedDate), hintStyle: const TextStyle(color: Colors.black),),),
                 ),
               ),
             ],
@@ -104,18 +105,21 @@ class _AddTodoPageState extends State<AddTodoPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(onPressed: () async {
-                SharedPreferences pref = await SharedPreferences.getInstance();
-
-
-              }, child: Text("SAVE", style: TextStyle(fontWeight: FontWeight.w700),), style: ButtonStyle(
+                setState(() {
+                  tdb.todos.add([todoNameController.text, dateController.text, false]);
+                  tdb.updateTodos();
+                  todoNameController.clear();
+                });
+                Navigator.pop(context);
+              }, style: ButtonStyle(
                   minimumSize: MaterialStateProperty.all(const Size(200, 60)),
                   backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
                   elevation: MaterialStateProperty.all(3),
                   shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)))
-              ),)
+              ), child: const Text("SAVE", style: TextStyle(fontWeight: FontWeight.w700),),)
             ],
           ),
-          Padding(padding: EdgeInsets.only(top: 40))
+          const Padding(padding: EdgeInsets.only(top: 40))
         ],
       )
     );

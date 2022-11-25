@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todo_flutter/data/todoDatabase.dart';
 import 'package:todo_flutter/presentation/addTodo.dart';
 
 
@@ -12,17 +13,20 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final now = DateTime.now();
-  late List todoItems = [];
+  TodoDatabase tdb = TodoDatabase();
+  final todos = Hive.box('todos');
 
-  _fetchTodos() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-
-  }
 
   @override
   void initState() {
-    _fetchTodos();
+    if (todos.get('TODOLIST') == null){
+      tdb.todos = [
+        ['Eat crayons', '26/11/2022', false]
+      ];
+      tdb.updateTodos();
+    } else {
+      tdb.loadTodos();
+    }
     super.initState();
   }
 
@@ -62,17 +66,25 @@ class _HomePageState extends State<HomePage> {
           const Divider(thickness: 2),
           ListView.builder(
               shrinkWrap: true,
-              itemCount: ,
+              itemCount: tdb.todos.length,
               itemBuilder: (context, index){
-            return CheckboxListTile(value: null, onChanged: (bool? value) {},);
+            return CheckboxListTile(
+              title: Text(tdb.todos[index][0]),
+              subtitle: Text(tdb.todos[index][1]),
+              value: tdb.todos[index][2],
+              onChanged: (bool? value) {
+                setState(() {
+                  tdb.todos[index][2] = value!;
+                  tdb.updateTodos();
+                });
+              },
+            );
           }),
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: ElevatedButton.icon(onPressed: (){
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const AddTodoPage())).then((v) {
-          _fetchTodos();
-        });
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const AddTodoPage()));
       }, icon: Icon(Icons.add), label: Text("ADD TASK", style: TextStyle(fontWeight: FontWeight.w700),)),
     );
   }
