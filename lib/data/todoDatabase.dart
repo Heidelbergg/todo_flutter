@@ -7,6 +7,7 @@ class TodoDatabase{
 
   void loadTodos(){
     todos = todoBox.get('TODOLIST');
+    print(todos);
   }
 
   void updateTodos(){

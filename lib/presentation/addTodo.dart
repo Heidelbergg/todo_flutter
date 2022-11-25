@@ -110,12 +110,11 @@ class _AddTodoPageState extends State<AddTodoPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElevatedButton(onPressed: () async {
+              ElevatedButton(onPressed: () {
                 setState(() {
+                  tdb.loadTodos();
                   tdb.todos.add([todoNameController.text, dateController.text, false]);
                   tdb.updateTodos();
-                  todoNameController.clear();
-                  print(tdb.todos.toString());
                 });
                 Navigator.pop(context);
               }, style: ButtonStyle(

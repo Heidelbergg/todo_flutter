@@ -19,7 +19,8 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     if (tdb.todoBox.get('TODOLIST') == null){
       tdb.todos = [
-        ['Eat crayons', '26/11/2022', false]
+        ['Eat crayons', '26/11/2022', false],
+        ['Eat balls', '27/11/2022', false],
       ];
     } else {
       tdb.loadTodos();
@@ -73,7 +74,6 @@ class _HomePageState extends State<HomePage> {
                 setState(() {
                   tdb.todos[index][2] = value!;
                   tdb.updateTodos();
-                  print(tdb.todos.toString());
                 });
               },
             );
