@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:todo_flutter/data/todoDatabase.dart';
 import 'package:todo_flutter/presentation/addTodo.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -38,7 +39,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: Colors.green,
         centerTitle: true,
-        title: Text("Dew it"),
+        title: Text("TooDoo"),
       ),
       body: ListView(
         shrinkWrap: true,
@@ -60,22 +61,48 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          const Divider(thickness: 2),
+          const SizedBox(
+            height: 15,
+          ),
           ListView.builder(
               shrinkWrap: true,
               itemCount: tdb.todos.length,
               itemBuilder: (context, index){
-            return CheckboxListTile(
-              tileColor: tdb.todos[index][2] == true ? Colors.grey : null,
-              title: tdb.todos[index][2] == false ? Text(tdb.todos[index][0]) :  Text(tdb.todos[index][0], style: const TextStyle(decoration: TextDecoration.lineThrough),),
-              subtitle: Text(tdb.todos[index][1]),
-              value: tdb.todos[index][2],
-              onChanged: (bool? value) {
-                setState(() {
-                  tdb.todos[index][2] = value!;
-                  tdb.updateTodos();
-                });
-              },
+            return Slidable(
+              endActionPane: ActionPane(
+                motion: ScrollMotion(),
+                children: [
+                  SlidableAction(
+                    onPressed: (context){
+                      setState(() {
+                        tdb.todos.removeAt(index);
+                        tdb.updateTodos();
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(backgroundColor: Colors.green, content: Text("Task Removed")));
+                    },
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    icon: Icons.delete,
+                    label: 'Delete',
+                  )
+                ],
+              ),
+              child: CheckboxListTile(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(0), // Optionally
+                  side:  BorderSide(color: Colors.black.withOpacity(0.25))
+                ),
+                tileColor: tdb.todos[index][2] == true ? Colors.grey : null,
+                title: tdb.todos[index][2] == false ? Text(tdb.todos[index][0], style: TextStyle(fontWeight: FontWeight.w600),) :  Text(tdb.todos[index][0], style: const TextStyle(decoration: TextDecoration.lineThrough),),
+                subtitle: Text(tdb.todos[index][1]),
+                value: tdb.todos[index][2],
+                onChanged: (bool? value) {
+                  setState(() {
+                    tdb.todos[index][2] = value!;
+                    tdb.updateTodos();
+                  });
+                },
+              ),
             );
           }),
         ],
@@ -87,7 +114,7 @@ class _HomePageState extends State<HomePage> {
             tdb.updateTodos();
           });
         });
-      }, icon: Icon(Icons.add), label: Text("ADD TASK", style: TextStyle(fontWeight: FontWeight.w700),)),
+      }, icon: Icon(Icons.add_box_sharp), label: Text("ADD TASK", style: TextStyle(fontWeight: FontWeight.w700),)),
     );
   }
 }
