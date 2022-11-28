@@ -4,7 +4,6 @@ import 'package:todo_flutter/data/todoDatabase.dart';
 import 'package:todo_flutter/presentation/addTodo.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -70,7 +69,7 @@ class _HomePageState extends State<HomePage> {
               itemBuilder: (context, index){
             return Slidable(
               endActionPane: ActionPane(
-                motion: ScrollMotion(),
+                motion: const ScrollMotion(),
                 children: [
                   SlidableAction(
                     onPressed: (context){
@@ -88,12 +87,8 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
               child: CheckboxListTile(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(0), // Optionally
-                  side:  BorderSide(color: Colors.black.withOpacity(0.25))
-                ),
-                tileColor: tdb.todos[index][2] == true ? Colors.grey : null,
-                title: tdb.todos[index][2] == false ? Text(tdb.todos[index][0], style: TextStyle(fontWeight: FontWeight.w600),) :  Text(tdb.todos[index][0], style: const TextStyle(decoration: TextDecoration.lineThrough),),
+                tileColor: tdb.todos[index][2] == true ? Colors.grey.withOpacity(0.25) : null,
+                title: tdb.todos[index][2] == false ? Text(tdb.todos[index][0], style: const TextStyle(fontWeight: FontWeight.w500),) :  Text(tdb.todos[index][0], style: const TextStyle(decoration: TextDecoration.lineThrough, fontWeight: FontWeight.w500),),
                 subtitle: Text(tdb.todos[index][1]),
                 value: tdb.todos[index][2],
                 onChanged: (bool? value) {
